@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import UploadForm from './components/UploadForm';
-import FilterControls from './components/FilterControls'; // <-- IMPORTAR O NOVO COMPONENTE
+import FilterControls from './components/FilterControls'; 
 import DataTable from './components/DataTable';
 
 function App() {
@@ -10,7 +10,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Estado para os filtros
   const [selectedPatient, setSelectedPatient] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
@@ -61,10 +60,8 @@ function App() {
     fetchPatients();
   }, [fetchPatients]);
 
-  // Função para lidar com a mudança de paciente
   const handlePatientChange = (patientId) => {
     setSelectedPatient(patientId);
-    // Limpa os filtros de tempo e os dados da tabela ao mudar de paciente
     setStartTime('');
     setEndTime('');
     setVitalSigns([]); 
@@ -78,7 +75,6 @@ function App() {
       <main>
         <div className="controls-container">
           <UploadForm onUploadSuccess={fetchPatients} />
-          {/* Substitui os dois componentes de filtro antigos por um só */}
           <FilterControls
             patients={patients}
             selectedPatient={selectedPatient}
@@ -94,8 +90,12 @@ function App() {
         {isLoading ? (
           <p>Carregando dados...</p>
         ) : (
-          // A tabela só é mostrada se um paciente for selecionado
-          selectedPatient && <DataTable data={vitalSigns} patientId={selectedPatient} />
+          selectedPatient && <DataTable 
+                        data={vitalSigns} 
+                        patientId={selectedPatient}
+                        startTime={startTime} 
+                        endTime={endTime}   
+                      />
         )}
       </main>
     </div>

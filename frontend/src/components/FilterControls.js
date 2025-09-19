@@ -8,7 +8,7 @@ function FilterControls({
   onStartTimeChange,
   endTime,
   onEndTimeChange,
-  onApply, // Função para aplicar todos os filtros
+  onApply, 
 }) {
   const isFilterDisabled = patients.length === 0 || !selectedPatient;
 

@@ -170,12 +170,11 @@ tr.alerta-row {
     flex-direction: column;
 }
 
-/* Garante que o container principal se ajuste bem */
 .controls-container {
-  align-items: flex-start; /* Alinha os cartões ao topo */
+  align-items: flex-start; 
 }
 
-/* Ajusta o tamanho da tabela quando os filtros estão presentes */
+
 .data-table-card {
   margin-top: 2rem;
 }

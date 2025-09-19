@@ -1,20 +1,20 @@
 from sqlalchemy import Column, Integer, String, Float, Time
-# Remova a importação do DateTime, pois estamos a usar Time
-# from sqlalchemy import DateTime
-from .database import Base # Importe a Base do seu arquivo database.py
+
+
+from .database import Base
 
 class VitalSign(Base):
     __tablename__ = "vital_signs"
 
     id = Column(Integer, primary_key=True, index=True)
-    timestamp = Column(Time) # Alterado de DateTime para Time
+    timestamp = Column(Time) 
     paciente_id = Column(String, index=True)
     paciente_nome = Column(String)
-    paciente_cpf = Column(String)   # <--- CAMPO ADICIONADO
+    paciente_cpf = Column(String)  
     hr = Column(Float)
     spo2 = Column(Float)
     pressao_sys = Column(Float)
     pressao_dia = Column(Float)
     temp = Column(Float)
-    resp_freq = Column(Float) # <--- CAMPO ADICIONADO
+    resp_freq = Column(Float) 
     status = Column(String)

@@ -10,7 +10,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
-# Importações dos nossos módulos locais
 from . import models, schemas
 from .database import engine, get_db
 
@@ -19,8 +18,6 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="HealthGo API")
 
-# Configuração do CORS (Cross-Origin Resource Sharing)
-# Permite que o nosso frontend (em outra origem) se comunique com esta API.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  
@@ -73,8 +70,8 @@ def get_patients_list(db: Session = Depends(get_db)):
 def get_patient_data(
     patient_id: str,
     db: Session = Depends(get_db),
-    start_time: Optional[time] = None, # <-- NOVO PARÂMETRO
-    end_time: Optional[time] = None    # <-- NOVO PARÂMETRO
+    start_time: Optional[time] = None, 
+    end_time: Optional[time] = None    
 ):
     
     # Inicia a consulta base
@@ -82,11 +79,11 @@ def get_patient_data(
         models.VitalSign.paciente_id == patient_id
     )
 
-    # Adiciona o filtro de tempo inicial, se fornecido
+    # Adiciona o filtro de tempo inicial
     if start_time:
         query = query.filter(models.VitalSign.timestamp >= start_time)
 
-    # Adiciona o filtro de tempo final, se fornecido
+    # Adiciona o filtro de tempo final
     if end_time:
         query = query.filter(models.VitalSign.timestamp <= end_time)
     
@@ -94,7 +91,6 @@ def get_patient_data(
     patient_data = query.order_by(models.VitalSign.timestamp).all()
     
     if not patient_data:
-        # Retorna uma lista vazia em vez de 404 para filtros que não encontram nada
         return []
         
     return patient_data
@@ -110,25 +106,39 @@ def get_patient_data(
 
 
 @app.get("/patients/{patient_id}/download")
-def download_patient_csv(patient_id: str, db: Session = Depends(get_db)):
+def download_patient_csv(
+    patient_id: str,
+    db: Session = Depends(get_db),
+    start_time: Optional[time] = None,
+    end_time: Optional[time] = None    
+):
 
-    patient_data = db.query(models.VitalSign).filter(
+    # Inicia a consulta base, exatamente como no endpoint de visualização
+    query = db.query(models.VitalSign).filter(
         models.VitalSign.paciente_id == patient_id
-    ).order_by(models.VitalSign.timestamp).all()
+    )
+
+    # Adiciona os filtros de tempo
+    if start_time:
+        query = query.filter(models.VitalSign.timestamp >= start_time)
+    if end_time:
+        query = query.filter(models.VitalSign.timestamp <= end_time)
+
+    # Executa a consulta final
+    patient_data = query.order_by(models.VitalSign.timestamp).all()
 
     if not patient_data:
-        raise HTTPException(status_code=404, detail="Dados não encontrados para o paciente informado.")
+        raise HTTPException(
+            status_code=404, 
+            detail="Nenhum dado encontrado para o paciente com os filtros aplicados."
+        )
 
-    # Converte os dados SQLAlchemy para um DataFrame pandas
     df = pd.DataFrame([data.__dict__ for data in patient_data])
-    # Remove colunas internas do SQLAlchemy
-    df = df.drop(columns=['_sa_instance_state'])
-
-    # Cria um buffer de texto em memória para o CSV
+    df = df.drop(columns=['_sa_instance_state', 'id']) 
     stream = io.StringIO()
     df.to_csv(stream, index=False)
     
     response = StreamingResponse(iter([stream.getvalue()]), media_type="text/csv")
-    response.headers["Content-Disposition"] = f"attachment; filename=dados_{patient_id}.csv"
+    response.headers["Content-Disposition"] = f"attachment; filename=dados_{patient_id}_filtrado.csv"
     
     return response

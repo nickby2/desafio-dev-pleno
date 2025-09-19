@@ -33,7 +33,7 @@ function UploadForm({ onUploadSuccess }) {
       }
 
       setMessage(result.message);
-      onUploadSuccess(); // Notifica o componente pai para atualizar a lista de pacientes
+      onUploadSuccess(); 
     } catch (error) {
       setMessage(error.message);
     } finally {
