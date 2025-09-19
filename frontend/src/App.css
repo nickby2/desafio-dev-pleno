@@ -178,3 +178,13 @@ tr.alerta-row {
 .data-table-card {
   margin-top: 2rem;
 }
+
+.results-container {
+  margin-top: 2rem;
+}
+
+.chart-card {
+  height: 400px; 
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}

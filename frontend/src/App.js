@@ -3,6 +3,7 @@ import './App.css';
 import UploadForm from './components/UploadForm';
 import FilterControls from './components/FilterControls'; 
 import DataTable from './components/DataTable';
+import VitalSignsChart from './components/VitalSignsChart';
 
 function App() {
   const [patients, setPatients] = useState([]);
@@ -90,12 +91,17 @@ function App() {
         {isLoading ? (
           <p>Carregando dados...</p>
         ) : (
-          selectedPatient && <DataTable 
-                        data={vitalSigns} 
-                        patientId={selectedPatient}
-                        startTime={startTime} 
-                        endTime={endTime}   
-                      />
+          <div className="results-container">
+            {selectedPatient && vitalSigns.length > 0 && (
+              <>
+                <VitalSignsChart data={vitalSigns} />
+                <DataTable data={vitalSigns} patientId={selectedPatient} startTime={startTime} endTime={endTime} />
+              </>
+            )}
+            {selectedPatient && !isLoading && vitalSigns.length === 0 && (
+                <p>Nenhum dado encontrado para o paciente com os filtros atuais.</p>
+            )}
+          </div>
         )}
       </main>
     </div>
