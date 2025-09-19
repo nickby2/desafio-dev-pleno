@@ -3,7 +3,6 @@
 Bem-vindo ao HealthGo, uma aplicação web full-stack desenvolvida como solução para o desafio técnico de Desenvolvedor(a) Web. O sistema permite o upload de dados de sinais vitais de pacientes via arquivos CSV, armazena essas informações num banco de dados e as exibe de forma organizada e interativa.
 
 
-
 ---
 
 ## Video de Apresentação
