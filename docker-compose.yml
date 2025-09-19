@@ -1,29 +1,39 @@
 
 services:
-
+  # Serviço do Banco de Dados PostgreSQL
+  # Garanta que a indentação aqui está correta (2 espaços)
   db:
-    image: postgres:13 
+    image: postgres:13
     container_name: healthgo_db
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=healthgodb
-    ports:
-      - "5433:5432" 
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
-  
+  # Serviço do Backend FastAPI
+  # Este serviço deve estar no mesmo nível de 'db'
   backend:
     container_name: healthgo_backend
-    build: ./backend 
+    build: ./backend
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
     volumes:
-      - ./backend:/app 
+      - ./backend:/app
     ports:
-      - "8000:8000" 
+      - "8000:8000"
     depends_on:
-      - db 
+      - db
+
+  # Serviço do Frontend React
+  # Este serviço também deve estar no mesmo nível de 'db' e 'backend'
+  frontend:
+    container_name: healthgo_frontend
+    build: ./frontend
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:

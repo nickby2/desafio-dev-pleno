@@ -1,0 +1,16 @@
+# Estágio 1: Build da aplicação React
+FROM node:18-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Estágio 2: Servir a aplicação com Nginx
+FROM nginx:alpine
+# Copia os arquivos estáticos construídos no estágio anterior para a pasta do Nginx
+COPY --from=build /app/build /usr/share/nginx/html
+# Expõe a porta 80 (padrão do Nginx)
+EXPOSE 80
+# O Nginx inicia automaticamente quando o container é executado
+CMD ["nginx", "-g", "daemon off;"]

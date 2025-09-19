@@ -1,7 +1,8 @@
 
 import io
 import pandas as pd
-from typing import List
+from typing import List, Optional
+from datetime import time
 
 from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
 from fastapi.responses import StreamingResponse
@@ -69,7 +70,34 @@ def get_patients_list(db: Session = Depends(get_db)):
 
 
 @app.get("/patients/{patient_id}", response_model=List[schemas.VitalSign])
-def get_patient_data(patient_id: str, db: Session = Depends(get_db)):
+def get_patient_data(
+    patient_id: str,
+    db: Session = Depends(get_db),
+    start_time: Optional[time] = None, # <-- NOVO PARÂMETRO
+    end_time: Optional[time] = None    # <-- NOVO PARÂMETRO
+):
+    
+    # Inicia a consulta base
+    query = db.query(models.VitalSign).filter(
+        models.VitalSign.paciente_id == patient_id
+    )
+
+    # Adiciona o filtro de tempo inicial, se fornecido
+    if start_time:
+        query = query.filter(models.VitalSign.timestamp >= start_time)
+
+    # Adiciona o filtro de tempo final, se fornecido
+    if end_time:
+        query = query.filter(models.VitalSign.timestamp <= end_time)
+    
+    # Executa a consulta final com ordenação
+    patient_data = query.order_by(models.VitalSign.timestamp).all()
+    
+    if not patient_data:
+        # Retorna uma lista vazia em vez de 404 para filtros que não encontram nada
+        return []
+        
+    return patient_data
     
     patient_data = db.query(models.VitalSign).filter(
         models.VitalSign.paciente_id == patient_id
