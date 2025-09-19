@@ -1,17 +1,16 @@
 import React from 'react';
 
-function DataTable({ data, patientId, startTime, endTime }) {
+function DataTable({ data, patientId, startTime, endTime, statusFilter }) {
 
   const handleDownload = () => {
     if (!patientId) return;
 
-    // Constrói a URL base
     let url = `${process.env.REACT_APP_API_URL}/patients/${patientId}/download`;
 
-    // Adiciona os parâmetros de tempo à URL se eles existirem
     const params = new URLSearchParams();
     if (startTime) params.append('start_time', startTime);
     if (endTime) params.append('end_time', endTime);
+    if (statusFilter) params.append('status', statusFilter); 
 
     const queryString = params.toString();
     if (queryString) {

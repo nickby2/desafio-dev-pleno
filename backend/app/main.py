@@ -13,7 +13,6 @@ from sqlalchemy import func
 from . import models, schemas
 from .database import engine, get_db
 
-# Cria as tabelas no banco de dados, caso não existam
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="HealthGo API")
@@ -28,7 +27,10 @@ app.add_middleware(
 
 @app.post("/upload-csv/", status_code=201)
 def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
-    
+    """
+    Endpoint para fazer o upload de um arquivo CSV, processá-lo e
+    salvar os dados no banco de dados.
+    """
     if not file.filename.endswith('.csv'):
         raise HTTPException(status_code=400, detail="Formato de arquivo inválido. Por favor, envie um .csv.")
 
@@ -38,7 +40,13 @@ def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
 
         required_columns = {'timestamp', 'paciente_id', 'paciente_nome', 'status'}
         if not required_columns.issubset(df.columns):
-            raise HTTPException(status_code=400, detail=f"O CSV deve conter as colunas: {required_columns}")
+             raise HTTPException(status_code=400, detail=f"O CSV deve conter as colunas: {required_columns}")
+
+        # --- CORREÇÃO DEFINITIVA ---
+        # Garante que AMBAS as colunas de texto importantes sejam limpas.
+        df['paciente_id'] = df['paciente_id'].str.strip()
+        df['status'] = df['status'].str.strip()
+        # -------------------------
 
         df['timestamp'] = pd.to_datetime(df['timestamp'], format='%H:%M:%S.%f').dt.time
         df = df.sort_values(by='timestamp')
@@ -54,7 +62,6 @@ def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
 @app.get("/patients/", response_model=List[schemas.Patient])
 def get_patients_list(db: Session = Depends(get_db)):
     
-    # Consulta que agrupa por ID e Nome do paciente para obter registros únicos
     patients = db.query(
         models.VitalSign.paciente_id,
         models.VitalSign.paciente_nome
@@ -71,23 +78,23 @@ def get_patient_data(
     patient_id: str,
     db: Session = Depends(get_db),
     start_time: Optional[time] = None, 
-    end_time: Optional[time] = None    
+    end_time: Optional[time] = None,
+    status: Optional[str] = None    
 ):
     
-    # Inicia a consulta base
     query = db.query(models.VitalSign).filter(
         models.VitalSign.paciente_id == patient_id
     )
 
-    # Adiciona o filtro de tempo inicial
     if start_time:
         query = query.filter(models.VitalSign.timestamp >= start_time)
 
-    # Adiciona o filtro de tempo final
     if end_time:
         query = query.filter(models.VitalSign.timestamp <= end_time)
     
-    # Executa a consulta final com ordenação
+    if status: 
+        query = query.filter(models.VitalSign.status == status)
+    
     patient_data = query.order_by(models.VitalSign.timestamp).all()
     
     if not patient_data:
@@ -110,21 +117,22 @@ def download_patient_csv(
     patient_id: str,
     db: Session = Depends(get_db),
     start_time: Optional[time] = None,
-    end_time: Optional[time] = None    
+    end_time: Optional[time] = None,
+    status: Optional[str] = None    
 ):
 
-    # Inicia a consulta base, exatamente como no endpoint de visualização
     query = db.query(models.VitalSign).filter(
         models.VitalSign.paciente_id == patient_id
     )
 
-    # Adiciona os filtros de tempo
     if start_time:
         query = query.filter(models.VitalSign.timestamp >= start_time)
     if end_time:
         query = query.filter(models.VitalSign.timestamp <= end_time)
+    
+    if status: 
+        query = query.filter(models.VitalSign.status == status)
 
-    # Executa a consulta final
     patient_data = query.order_by(models.VitalSign.timestamp).all()
 
     if not patient_data:

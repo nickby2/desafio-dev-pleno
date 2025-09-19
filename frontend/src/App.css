@@ -188,3 +188,63 @@ tr.alerta-row {
   padding: 1.5rem;
   margin-bottom: 2rem;
 }
+
+.App-header {
+  background-color: var(--primary-color);
+  padding: 1rem 0; /* Ajusta o padding vertical */
+  color: white;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem; /* Alinha com o conteúdo principal */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-content h1 {
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.header-buttons button {
+  background-color: transparent;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.header-buttons button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: white;
+}
+
+/* Estilo para o botão quando seu painel está ativo */
+.header-buttons button.active {
+  background-color: white;
+  color: var(--primary-color);
+}
+
+/* Garante que o container de controles tenha o espaçamento correto */
+.controls-container {
+  /* ... (estilos existentes para .controls-container) ... */
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  align-items: stretch;
+}

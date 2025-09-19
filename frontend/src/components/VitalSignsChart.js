@@ -22,8 +22,26 @@ ChartJS.register(
 );
 
 function VitalSignsChart({ data }) {
+
+    const formatTime = (timestamp) => {
+    if (!timestamp) return '';
+
+    if (/^\d{2}:\d{2}:\d{2}/.test(timestamp)) {
+        return timestamp.slice(0, 8);
+    }
+
+    if (timestamp instanceof Date) {
+        return timestamp.toLocaleTimeString('pt-BR', { hour12: false });
+    }
+
+    if (typeof timestamp === 'string' && timestamp.includes('.')) {
+        return timestamp.split('.')[0];
+    }
+    return timestamp;
+  };
+
   const chartData = {
-    labels: data.map(row => row.timestamp), 
+    labels: data.map(row => formatTime(row.timestamp)),
     datasets: [
       {
         label: 'Freq. Cardíaca (bpm)',
@@ -86,6 +104,11 @@ function VitalSignsChart({ data }) {
         title: {
           display: true,
           text: 'Horário'
+        },
+        ticks: {
+          callback: function(value, index, ticks) {
+            return chartData.labels[index];
+          }
         }
       },
       y: {

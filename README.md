@@ -2,13 +2,14 @@
 
 Bem-vindo ao HealthGo, uma aplicação web full-stack desenvolvida como solução para o desafio técnico de Desenvolvedor(a) Web. O sistema permite o upload de dados de sinais vitais de pacientes via arquivos CSV, armazena essas informações num banco de dados e as exibe de forma organizada e interativa.
 
-<p align="center">
-  <img src="./dashboard_screenshot_displays_patient_vital_sign.jpg" alt="Screenshot da aplicação HealthGo em funcionamento" width="900"/>
-  <br>
-  <em>Figura: Dashboard principal com gráfico, filtros e tabela de dados.</em>
-</p>
+
 
 ---
+
+## Video de Apresentação
+
+[Apresentação](https://www.youtube.com/watch?v=L-2vZM_H5hs)
+
 
 ## ✨ Funcionalidades Implementadas
 
@@ -88,13 +89,13 @@ O frontend precisa de saber onde encontrar o backend. Crie um ficheiro de ambien
 
 #### 4. Construir e Iniciar os Contêineres
 
-Este é o comando principal. Ele vai construir as imagens do frontend e do backend, descarregar a imagem do PostgreSQL e iniciar todos os serviços.
+s.
 
 ```bash
 docker-compose up --build
 ```
 
-A primeira execução pode demorar alguns minutos, pois o Docker precisa de descarregar as imagens base e instalar todas as dependências.
+
 
 #### 5. Aceder à Aplicação
 

@@ -8,7 +8,9 @@ function FilterControls({
   onStartTimeChange,
   endTime,
   onEndTimeChange,
-  onApply, 
+  statusFilter, 
+  onStatusChange, 
+  onApply,
 }) {
   const isFilterDisabled = patients.length === 0 || !selectedPatient;
 
@@ -16,7 +18,6 @@ function FilterControls({
     <div className="card filter-card">
       <h2>Filtros de Visualização</h2>
       
-      {/* Filtro de Paciente */}
       <div className="filter-group">
         <label htmlFor="patient-select">Paciente:</label>
         <select
@@ -34,7 +35,20 @@ function FilterControls({
         </select>
       </div>
 
-      {/* Filtro de Horário */}
+      <div className="filter-group">
+        <label htmlFor="status-select">Status:</label>
+        <select
+          id="status-select"
+          value={statusFilter}
+          onChange={(e) => onStatusChange(e.target.value)}
+          disabled={isFilterDisabled}
+        >
+          <option value="">Todos os Status</option>
+          <option value="NORMAL">Normal</option>
+          <option value="ALERTA">Alerta</option>
+        </select>
+      </div>
+
       <div className="filter-group time-filter-group">
         <div className="time-input">
             <label htmlFor="startTime">Horário Inicial:</label>
